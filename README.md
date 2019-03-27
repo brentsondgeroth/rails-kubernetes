@@ -1,24 +1,9 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This application is meant to be a starting point for
+rails applications running on kubernetes.
 
-Things you may want to cover:
+*Current State*
 
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+Run `docker-compose build` to generate your docker image
+Run `docker-compose up` to start your rails app
