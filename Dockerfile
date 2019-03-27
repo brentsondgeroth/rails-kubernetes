@@ -1,5 +1,5 @@
 FROM ruby:2.5.3
-RUN apt-get update -qq && curl -sL https://deb.nodesource.com/setup_10.x | bash - && apt-get install -y nodejs  && apt-get install -y postgresql-client
+RUN apt-get update -qq && apt-get install -y nodejs postgresql-client
 
 ENV RAILS_ROOT /var/www/
 RUN mkdir -p $RAILS_ROOT

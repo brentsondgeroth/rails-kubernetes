@@ -1,16 +1,7 @@
 version: 2
 jobs:
   build:
-    docker:
-    - image: circleci/ruby:2.5.3-node-browsers
-      environment:
-        BUNDLE_JOBS: 3
-        BUNDLE_RETRY: 3
-        BUNDLE_PATH: vendor/bundle
-        PGHOST: 127.0.0.1
-        PGUSER: circleci-demo-ruby
-        RAILS_ENV: test
-
+    machine: true
     working_directory: ~/repo
 
     steps:
@@ -22,7 +13,7 @@ jobs:
         - v1-dependencies-{{ checksum "Gemfile.lock" }}
         # fallback to using the latest cache if no exact match is found
         - v1-dependencies-
-
+    - run: docker-compose up -d
     - run:
         name: install dependencies
         command: |
