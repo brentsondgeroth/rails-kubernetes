@@ -1,20 +1,40 @@
 FROM ruby:2.5.5
-RUN apt-get update -qq && apt-get install -y nodejs postgresql-client
+
+# replace shell with bash so we can source files
+RUN rm /bin/sh && ln -s /bin/bash /bin/sh
+
+RUN apt-get update -qq && apt-get install -y build-essential libpq-dev nodejs ghostscript
 
 ENV RAILS_ROOT /var/www/
 RUN mkdir -p $RAILS_ROOT
 WORKDIR $RAILS_ROOT
 
-COPY Gemfile ./
-COPY Gemfile.lock ./
-RUN bundle install
+RUN curl -sL https://deb.nodesource.com/setup_11.x | bash -
+RUN apt-get install -y nodejs
+
+RUN node -v
+RUN npm -v
+
+RUN gem install bundler -v 2.0.2
+
+# Copy the Gemfile as well as the Gemfile.lock and install
+# the RubyGems. This is a separate step so the dependencies
+# will be cached unless changes to one of those two files
+# are made.
+COPY Gemfile Gemfile.lock ./
+RUN bundle install --verbose --jobs 20 --retry 5
+
+RUN npm install -g yarn
+RUN yarn install --check-files
+
+# Copy the main application.
 COPY . .
 
-# Add a script to be executed every time the container starts.
-COPY docker-entrypoint.sh /usr/bin/
-RUN chmod +x /usr/bin/docker-entrypoint.sh
-ENTRYPOINT ["docker-entrypoint.sh"]
+# Expose port 3000 to the Docker host, so we can access it
+# from the outside.
 EXPOSE 3000
 
-# Start the main process.
-CMD ["rails", "server", "-b", "0.0.0.0"]
+# The main command to run when the container starts. Also
+# tell the Rails dev server to bind to all interfaces by
+# default.
+CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0"]

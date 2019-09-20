@@ -2,14 +2,18 @@ version: '3'
 services:
   db:
     image: postgres
+    ports:
+      - "5432:5432"
     volumes:
-    - /var/lib/postgresql/datadb/
+      - ./tmp/db:/var/lib/postgresql/data
   web:
     build: .
     command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
     volumes:
     - "./:/var/www"
     ports:
-    - "3000:3000"
+      - '3000:3000'
+    environment:
+      DATABASE_URL: postgres://postgres@db
     depends_on:
-    - db
+      - db
